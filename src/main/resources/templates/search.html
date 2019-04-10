@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Test</title>
+<script type="text/javascript">
+		function getSearchUrl(){
+			var keyword = document.getElementById("keyword").value;
+			var index = document.URL.toString().indexOf('bond');
+			var fromDate = document.getElementById("fromDate").value;
+			var toDate = document.getElementById("toDate").value;
+			if(keyword==""&&fromDate==null&&toDate==null){
+				return document.URL.toString();
+			}else{
+				return document.URL.toString().substr(0,index+5)+'search?keyword='+keyword+'&fromdate='+fromDate+'&todate='+toDate;
+			}
+		}
+</script>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("button").click(function () {
+            	alert("确定修改标记值？")
+                let obj= Object.create(null);
+                $("tr[class='content']").each(function () {
+                    obj[$(this).children('td').eq(0).text()] = $(this).children('td').eq(1).find('input').eq(0).prop('checked')?1:0;
+                });
+                $.ajax({
+                    url: '/bond/mark',
+                    type: 'post',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({"vals": obj}),
+                    async: true,
+                    success: function (data) {
+                    	alert(data['msg'])
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    	alert("更新失败，请重试");
+                        alert(XMLHttpRequest.status);
+                        alert(errorThrown);
+                        alert(textStatus);
+                    }
+                });
+            });
+        });
+</script>
+</head>
+<body>
+
+		<div class="container">
+		    <form action="">
+		        <p>公告标题关键字：
+				    <input type="text" id="keyword" value="">
+					公告发布日期范围：
+			        <input type="date" id="fromDate" value="">
+					-
+					<input type="date" id="toDate" value="">
+			        <input type="button" id="search" value="搜索" onclick="window.location.href=getSearchUrl()">
+					<p th:text="${note}"></p>
+				</p>
+		    </form>
+		</div>
+
+		<div>
+		<table border=1, cellpadding=10>
+			<tr>
+				<th>ID</th>
+				<th>MK</th>
+				<th>公告标题</th>
+				<th>发布时间</th>
+				<th>公告链接</th>
+				<th>公告类型</th>
+				<th>抓取时间</th>
+			</tr>
+			<tr th:each="s:${bond_list}" class="content">
+				<td th:text="${s.id}" class="id"></td>
+				<td>
+					<input type="checkbox" id="checkbox" th:checked="${s.MK==1}">
+				</td>
+				<td>
+					<a href="obsPath" th:href="@{'http://xxxxx'+${s.obsPath}}">
+						<p th:text="${s.title}"></p>
+					</a>
+				</td>
+				<td th:text="${s.publishTime}"></td>
+				<td th:text="${s.pdfUrl}">
+				
+				<td th:text="${s.type}"></td>
+				<td th:text="${s.createTime}"></td>
+				
+			</tr>
+		</table>
+	<button>更改</button>
+	</div>
+
+	<table align="center">
+	  	<tr>
+		  	<td><a th:href="@{'/bond/search?keyword='+${keyword}+'&fromdate='+${from}+'&todate='+${to}}">首页</a></td>
+		    <td th:switch="${current_page}">
+		      <p th:case="1">上一页</p>
+		      <p th:case="*">
+					<a
+						th:href="@{'/bond/search?keyword='+${keyword}+'&fromdate='+${from}+'&todate='+${to}+'&pn='+${current_page-1}}">上一页</a>
+				</p>
+		    </td>
+		    <td th:switch="${current_page}">
+		      <p th:case="${total_pages}">下一页</p>
+		      <p th:case="*">
+					<a
+						th:href="@{'/bond/search?keyword='+${keyword}+'&fromdate='+${from}+'&todate='+${to}+'&pn='+${current_page+1}}">下一页</a>
+				</p>
+		    </td>
+	    	<td><a
+				th:href="@{'/bond/search?keyword='+${keyword}+'&fromdate='+${from}+'&todate='+${to}+'&pn='+${total_pages}}">
+	    			<p th:text="'第 '+${total_pages}+' 页'"></p>
+	    		</a>
+	    	</td>
+	  	</tr>
+	</table>
+</body>
+</html>

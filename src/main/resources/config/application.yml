@@ -1,0 +1,35 @@
+server:
+  port: 8080
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet.content-type: text/html; charset=utf-8
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/wjs?useSSL=false&useUnicode=true&serverTimezone=GMT%2B8
+    username: username
+    password: password
+multiple:
+  datasource: 
+    master:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/wjs?useSSL=false&useUnicode=true&serverTimezone=GMT%2B8
+      username: username
+      password: password
+    slave1:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/tag?useSSL=false&useUnicode=true&serverTimezone=GMT%2B8
+      username: username
+      password: password
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+logging:
+  path: log
+  config: classpath:config/log4j2.yml
+  level:
+    root: info
